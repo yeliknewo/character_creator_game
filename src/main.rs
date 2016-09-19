@@ -10,7 +10,7 @@ mod game;
 use game::{Game};
 
 widget_ids!(
-    struct Ids {
+    pub struct Ids {
         canvas,
         play_button
     }
@@ -57,7 +57,7 @@ fn main() {
 
     let image_map = conrod::image::Map::new();
 
-    let game = Game::new(assets);
+    let mut game = Game::new(assets);
 
     while let Some(event) = window.next() {
         if let Some(e) = conrod::backend::piston_window::convert_event(event.clone(), &window) {
@@ -65,25 +65,7 @@ fn main() {
         }
 
         event.update(|_| {
-            use conrod::{color, widget, Labelable, Colorable, Positionable, Sizeable, Borderable, Widget};
-
-            let mut ui = ui.set_widgets();
-
-            widget::Canvas::new().color(color::DARK_CHARCOAL).set(ids.canvas, &mut ui);
-
-            for times_clicked in widget::Button::new()
-                .align_label_middle()
-                .middle_of(ids.canvas)
-                .w_h(200.0, 200.0)
-                .border(5.0)
-                .border_color(color::BLACK)
-                .label("Play")
-                .label_color(color::WHITE)
-                .label_font_size(32)
-                .color(color::DARK_PURPLE)
-                .set(ids.play_button, &mut ui) {
-                    println!("{:?}", times_clicked);
-            }
+            game.draw_ui(ui.set_widgets(), &ids);
         });
 
         window.draw_2d(&event, |c, g| {
